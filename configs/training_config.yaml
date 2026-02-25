@@ -1,0 +1,50 @@
+# 训练超参配置
+# 文档参考：README.md §6.2
+
+model:
+  base_model_id: "Qwen/Qwen3-8B-FP8"
+  # 本地缓存路径（优先使用，避免重复下载）
+  local_model_path: "/home/lulingjie/.cache/huggingface/hub/models--Qwen--Qwen3-8B-FP8/snapshots/220b46e3b2180893580a4454f21f22d3ebb187d3"
+  trust_remote_code: true
+  # FP8 模型已压缩至 ~8.9GB，无需 bitsandbytes 二次量化
+  use_fp8: true
+
+data:
+  train_file: "data/processed/train.jsonl"
+  val_file: "data/processed/val.jsonl"
+  max_seq_len: 2048
+  label_mask_prefix_len: 0       # 设为 256 可屏蔽 chunk 前缀 loss，获得更准确 PPL
+
+training:
+  output_dir: "outputs"
+  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 32  # 等效 batch_size = 32（batch=1，vocab=151k导致logits需4.6GB，降batch规避OOM）
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  max_grad_norm: 1.0
+  bf16: true
+  tf32: true                      # RTX 4090 支持，加速矩阵乘法
+  optim: "adamw_torch"            # FP8 路径不依赖 bitsandbytes，使用标准 AdamW
+  dataloader_num_workers: 4
+  group_by_length: false          # 所有 chunk 等长，无需按长度分组
+  remove_unused_columns: false
+
+checkpointing:
+  save_strategy: "steps"
+  save_steps: 25                  # 每 epoch 约 25 步（791样本 / batch32 ≈ 25 optimizer steps）
+  save_total_limit: 5             # 最多保留 5 个 checkpoint
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+
+evaluation:
+  eval_strategy: "steps"
+  eval_steps: 25                  # 每 epoch 评估一次
+
+logging:
+  logging_steps: 10
+  report_to: "tensorboard"        # 可改为 "wandb"
+  logging_dir: "outputs/logs"

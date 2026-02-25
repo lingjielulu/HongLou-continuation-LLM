@@ -1,0 +1,29 @@
+# LoRA 适配器配置
+# 文档参考：README.md §6
+
+lora:
+  r: 16                          # LoRA 秩
+  lora_alpha: 32                 # scaling = alpha / r = 2.0
+  lora_dropout: 0.05               # 基础权重已转为 BF16，dropout 正常支持
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+# 量化说明：
+# Qwen3-8B-FP8 权重已以 FP8 格式存储（~8.9GB），
+# 无需 bitsandbytes 再次量化。加载时使用 torch_dtype="auto"
+# 即可识别 FP8 权重，LoRA 适配器仍以 BF16 训练。
+#
+# 显存估算（RTX 4090）：
+#   FP8 权重：    ~8.9 GB
+#   LoRA (BF16)：  ~0.3 GB
+#   激活值（GC）： ~2-4 GB
+#   LoRA 梯度+优化器： ~1.2 GB
+#   合计：        ~13-15 GB  ✓
