@@ -5,15 +5,17 @@ data/processed/
 # 模型权重（体积过大）
 models/
 
-# 训练检查点（501MB × 3 + 178MB，不入版本控制）
-outputs/checkpoint-25/
-outputs/checkpoint-50/
-outputs/checkpoint-75/
+# 训练检查点与模型权重（体积过大，不入版本控制）
+outputs/checkpoint-*/
+outputs/*/checkpoint-*/
+outputs/*/best/
 outputs/checkpoint-best/
 
 # 其他大文件
 outputs/test.png
 outputs/train.log
+outputs/instruct_generation.log
+outputs/lora_instruct_generation.log
 
 # Python
 __pycache__/
