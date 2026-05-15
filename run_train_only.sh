@@ -1,5 +1,6 @@
 #!/bin/bash
-# 仅运行训练（跳过基线评估）
+# Legacy：仅运行旧 LoRA 训练（跳过基线评估）
+# 当前主线请使用 scripts/prompt_baseline_generate.py。
 # 用法：bash run_train_only.sh
 
 set -e

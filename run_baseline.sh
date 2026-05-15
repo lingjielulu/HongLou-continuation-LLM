@@ -1,5 +1,6 @@
 #!/bin/bash
-# 基线评估 + 训练启动脚本
+# Legacy：旧 LoRA 基线评估 + 训练启动脚本
+# 当前主线请使用 scripts/prompt_baseline_generate.py。
 # 用法：bash run_baseline.sh
 
 set -e

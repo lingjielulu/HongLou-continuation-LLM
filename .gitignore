@@ -11,6 +11,9 @@ outputs/*/checkpoint-*/
 outputs/*/best/
 outputs/checkpoint-best/
 
+# 当前 prompt baseline 的生成产物（按需保留在本地，不默认提交）
+generations/prompt_baseline/
+
 # 其他大文件
 outputs/test.png
 outputs/train.log
@@ -23,6 +26,9 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.env
+.env.*
+!.env.example
 
 # Jupyter
 .ipynb_checkpoints/
